@@ -7,3 +7,9 @@ router.get('/', function(req, res) {
 });
 
 module.exports = router;
+
+
+router.get('/dossiers', function(req,res){
+    console.log("ici");
+    res.send(500, {msg: "Erreur: " + err});
+})
