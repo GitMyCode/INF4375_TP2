@@ -1,0 +1,17 @@
+{
+  "name": "Tp2",
+  "version": "0.0.0",
+  "description": "",
+  "main": "migration.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.4.3",
+    "mongodb": "^1.4.7",
+    "xmldom": "^0.1.19",
+    "xpath": "0.0.6"
+  }
+}
