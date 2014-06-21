@@ -1,20 +1,51 @@
 var requestify = require('requestify');
 
-var editeur = {
-    "nom": "Vim",
-    "auteur": "Bram Moolenaar",
-    "annee": 1991,
-    "dernvers": "7.4",
-    "langprog": "C, Vimscript",
-    "license": "GPL compatible"
-};
 
-requestify.request('http://localhost:3000/nouvel/editeur', {
+var test = {
+    'nom' : 'yo'
+}
+
+var unDossier = {
+    "nom" : "test_nom",
+    "prenom" : "test_prenom",
+    "codePermanent" : "BOUM15078700",
+    "sexe" : "2",
+    "dateNaissance" : "1987-07-15",
+    "inscriptions" : [
+        {
+            "sigle": "INF4375",
+            "group": "10",
+            "session" : "20142",
+            "noteFinale" : "95"
+        }
+    ]
+}
+
+var unMauvaisDossier = {
+
+    'dsdsdsd' : "BOUM15078700"
+
+}
+
+
+requestify.request('http://localhost:3000/dossiers', {
     method: 'POST',
-    body: editeur,
+    body: unDossier,
     dataType: 'json'
 }).then(function(response) {
-
+    console.log("----- BONNE STRUCTURE -----")
     console.log("Réponse serveur - code : " + response.getCode());
     console.log("Réponse serveur - body: " + response.body);
 });
+
+requestify.request('http://localhost:3000/dossiers', {
+    method: 'POST',
+    body: unMauvaisDossier,
+    dataType: 'json'
+}).then(function(response) {
+    console.log("----- MAUVAISE STRUCTURE -----")
+    console.log("Réponse serveur - code : " + response.getCode());
+    console.log("Réponse serveur - body: " + response.body);
+    console.log("Réponse serveur - error: " + response.error);
+});
+
