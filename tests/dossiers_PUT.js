@@ -1,25 +1,32 @@
 var requestify = require('requestify');
 var async = require('async');
 
-var editeur1 = {
-    "nom": "Vim",
-    "auteur": "Bram Moolenaar",
-    "annee": 1991,
-    "dernvers": "7.4",
-    "langprog": "C, Vimscript",
-    "license": "GPL compatible"
-};
+var unDossier = {
+    "nom" : "test_nom",
+    "prenom" : "test_prenom",
+    "codePermanent" : "BOUM15078700",
+    "sexe" : "2",
+    "dateNaissance" : "1987-07-15",
+    "inscriptions" : [
+        {
+            "sigle": "INF4375",
+            "group": "10",
+            "session" : "20142",
+            "noteFinale" : "95"
+        }
+    ]
+}
 
-var idEditeurAModifier;
+var cpDossierAModifier = 'BOUM15078700';
 
 async.series([
 
-    function insererEditeur1(callback) {
+    function insererUnDossier(callback) {
         console.log("Insertion d'un éditeur dans la base de données.");
 
-        requestify.request('http://localhost:3000/nouvel/editeur', {
+        requestify.request('http://localhost:3000/dossiers', {
             method: 'POST',
-            body: editeur1,
+            body: unDossier,
             dataType: 'json'
 
         }).then(function(response) {
@@ -27,37 +34,37 @@ async.series([
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'insererEditeur1');
+            callback(null, 'insererUnDossier');
         });
 
     },
 
-    function getEditeurs(callback) {
+    function getDossiers(callback) {
 
         console.log("Consultation de tous les éditeurs dans la base de donnéés.");
 
-        requestify.get('http://localhost:3000/editeurs').then(function(response) {
+        requestify.get('http://localhost:3000/dossiers/' + cpDossierAModifier).then(function(response) {
 
             console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
-            idEditeurAModifier = response.getBody()[0]['_id'];
+            cpDossierAModifier = response.getBody()[0]['codePermanent'];
 
-            callback(null, 'getEditeurs');
+            callback(null, 'getDossiers');
         });
     },
 
-    function modifierUnEditeur1(callback) {
+    function modifierUnDossier(callback) {
         console.log("\n\nModification de l'éditeur (1).");
-        console.log("_id de l'éditeur à modifier: " + idEditeurAModifier);
+        console.log("cp de l'éditeur à modifier: " + cpDossierAModifier);
 
-        var modifEditeur1 = {
-            "nom": "Vi IMproved",
-            "dernvers": "7.4b.000"
+        var modifDossiers1 = {
+            "nom": "ok",
+            "codePermanent" : cpDossierAModifier.toString()
         };
-        console.log("\nModifications à apporter: " + JSON.stringify(modifEditeur1, null, 4));
+        console.log("\nModifications à apporter: " + JSON.stringify(modifDossiers1, null, 4));
 
-        requestify.request('http://localhost:3000/modifier/editeur/' + idEditeurAModifier,
+        requestify.request('http://localhost:3000/dossiers/' + cpDossierAModifier,
             {method: 'PUT',
-             body: modifEditeur1,
+             body: modifDossiers1,
              dataType: 'json'}
 
         ).then(function(response) {
@@ -65,28 +72,29 @@ async.series([
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierUnEditeur1');
+            callback(null, 'modifierUnDossier');
         }).fail(function(response) {
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierUnEditeur1');
+            callback(null, 'modifierUnDossier');
         });
 
     },
 
     function modifierUnEditeur2(callback) {
         console.log("\n\nModification de l'éditeur (2).");
-        console.log("_id de l'éditeur à modifier: " + idEditeurAModifier);
+        console.log("_id de l'éditeur à modifier: " + cpDossierAModifier);
 
         var modifEditeur2 = {
+            'codePermanent': codePermanent,
             "GUI": "no",
             "website": "www.vim.org"
         };
 
         console.log("\nModifications à apporter: " + JSON.stringify(modifEditeur2, null, 4));
 
-        requestify.request('http://localhost:3000/modifier/editeur/' + idEditeurAModifier,
+        requestify.request('http://localhost:3000/dossiers/' + cpDossierAModifier,
             {method: 'PUT',
              body: modifEditeur2,
              dataType: 'json'}
@@ -107,15 +115,16 @@ async.series([
 
     },
 
-    function getEditeursApresSupp(callback) {
+    function getDossiersApresSupp(callback) {
 
         console.log("Consultation de tous les éditeurs dans la base de donnéés après modification.");
 
-        requestify.get('http://localhost:3000/editeurs').then(function(response) {
+        requestify.get('http://localhost:3000/dossiers/' + cpDossierAModifier ).then(function(response) {
 
             console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
+            console.log('------------------------------------------------------------------------')
 
-            callback(null, 'getEditeursApresSupp');
+            callback(null, 'getDossiersApresSupp');
         });
     }
 ],

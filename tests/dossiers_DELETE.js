@@ -1,97 +1,114 @@
 var requestify = require('requestify');
 var async = require('async');
 
-var editeur1 = {
-    "nom": "Vim",
-    "auteur": "Bram Moolenaar",
-    "annee": 1991,
-    "dernvers": "7.4",
-    "langprog": "C, Vimscript",
-    "license": "GPL compatible"
+var dossier1 = {
+    "nom" : "test_nom",
+    "prenom" : "test_prenom",
+    "codePermanent" : "BOUM15078700",
+    "sexe" : "2",
+    "dateNaissance" : "1987-07-15",
+    "inscriptions" : [
+        {
+            "sigle": "INF4375",
+            "group": "10",
+            "session" : "20142",
+            "noteFinale" : "45"
+        }
+    ]
 };
 
-var editeur2 = {
-    "nom": "GNU Emacs",
-    "auteur": "Richard Stallman",
-    "annee": 1984,
-    "dernvers": "24.3",
-    "langprog": "C, Emacs Lisp",
-    "license": "GPL"
+var dossier2 = {
+    "nom" : "test_nom2",
+    "prenom" : "test_prenom2",
+    "codePermanent" : "BOUM15078702",
+    "sexe" : "2",
+    "dateNaissance" : "1987-07-15",
+    "inscriptions" : [
+        {
+            "sigle": "INF4375",
+            "group": "10",
+            "session" : "20142",
+            "noteFinale" : "95"
+        }
+    ]
 };
 
-var idEditeurASupprimer;
+var cpDossierAModifier = 'BOUM15078700';
 
 async.series([
 
-    function insererEditeur1(callback) {
-        console.log("Insertion du premier éditeur dans la base de données.");
+    function insererUnDossier(callback) {
+        console.log("Insertion d'un éditeur dans la base de données.");
 
-        requestify.request('http://localhost:3000/nouvel/editeur', {
+        requestify.request('http://localhost:3000/dossiers', {
             method: 'POST',
-            body: editeur1,
+            body: dossier1,
             dataType: 'json'
+
         }).then(function(response) {
 
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'insererEditeur1');
+            callback(null, 'insererUnDossier');
         });
 
-    },
+    }/*,
 
-    function insererEditeur2(callback) {
-        console.log("Insertion du deuxième éditeur dans la base de données.");
+    function insererUnDossier2(callback) {
+        console.log("Insertion d'un éditeur dans la base de données.");
 
-        requestify.request('http://localhost:3000/nouvel/editeur', {
+        requestify.request('http://localhost:3000/dossiers', {
             method: 'POST',
-            body: editeur2,
+            body: dossier2,
             dataType: 'json'
+
         }).then(function(response) {
 
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'insererEditeur2');
+            callback(null, 'insererUnDossier');
         });
 
-    },
+    }*/,
 
-    function getEditeurs(callback) {
+    function getDossiers(callback) {
 
         console.log("Consultation de tous les éditeurs dans la base de donnéés.");
 
-        requestify.get('http://localhost:3000/editeurs').then(function(response) {
+        requestify.get('http://localhost:3000/dossiers/'+ cpDossierAModifier).then(function(response) {
 
             console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
-            idEditeurASupprimer = response.getBody()[1]['_id'];
+            //cpDossierAModifier = response.getBody()[0]['codePermanent'];
 
-            callback(null, 'getEditeurs');
+            callback(null, 'getDossiers');
         });
     },
 
-    function supprimerUnEditeur(callback) {
+    function supprimerUnDossier(callback) {
         console.log("Suppression du deuxième éditeur");
-        console.log("_id de l'éditeur à supprimer: " + idEditeurASupprimer);
+        console.log("_id de l'éditeur à supprimer: " + cpDossierAModifier);
 
-        requestify.delete('http://localhost:3000/supprimer/editeur/' + idEditeurASupprimer).then(function(response) {
+        requestify.delete('http://localhost:3000/dossiers/' + cpDossierAModifier).then(function(response) {
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'supprimerUnEditeur');
+            callback(null, 'supprimerUnDossier');
         });
 
     },
 
-    function getEditeursApresSupp(callback) {
+    function getDossiers(callback) {
 
-        console.log("Consultation de tous les éditeurs dans la base de donnéés après suppression.");
+        console.log("Consultation de tous les éditeurs dans la base de donnéés.");
 
-        requestify.get('http://localhost:3000/editeurs').then(function(response) {
+        requestify.get('http://localhost:3000/dossiers/'+ cpDossierAModifier).then(function(response) {
 
             console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
+            cpDossierAModifier = response.getBody()[0]['codePermanent'];
 
-            callback(null, 'getEditeursApresSupp');
+            callback(null, 'getDossiers');
         });
     }
 ],

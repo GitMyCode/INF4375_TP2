@@ -36,6 +36,7 @@ requestify.request('http://localhost:3000/dossiers', {
     console.log("----- BONNE STRUCTURE -----")
     console.log("Réponse serveur - code : " + response.getCode());
     console.log("Réponse serveur - body: " + response.body);
+    console.log("Réponse serveur - error: " + response.error);
 });
 
 requestify.request('http://localhost:3000/dossiers', {
