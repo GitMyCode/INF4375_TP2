@@ -145,8 +145,8 @@ var schemaGroupesPOST = {
     "required": true,
     "properties": {
         "sigle": {
-            "type" : "string",
-            "required" : true
+            "type": "string",
+            "required": true
         },
         "nomCours": {
             "type": "string",
@@ -161,7 +161,7 @@ var schemaGroupesPOST = {
             "required": false
         },
         "moyenne": {
-            "type": "integer",
+            "type": "float",
             "required": false
         },
         "listeEtudiant": {
@@ -171,28 +171,27 @@ var schemaGroupesPOST = {
                 "type": "object",
                 "required": false,
                 "properties": {
-                    "group": {
+                    "codePermanent": {
                         "type": "string",
-                        "required": false
+                        "required": true
+                    },
+                    "nom": {
+                        "type": "string",
+                        "required": true
+                    },
+                    "prenom": {
+                        "type": "string",
+                        "required": true
                     },
                     "noteFinale": {
                         "type": "string",
-                        "required": false
-                    },
-                    "session": {
-                        "type": "string",
-                        "required": false
-                    },
-                    "sigle": {
-                        "type": "string",
-                        "required": false
+                        "required": true
                     }
                 }
             }
 
 
-        },
-        additionalProperties: false
+        }
     },
     additionalProperties: false
 }
@@ -296,9 +295,7 @@ router.put('/dossiers/:cp', function (req, res) {
 
     try {
         var valider = v.validate(modifsDossiers, schemaDossierPUT);
-        console.log("DANS LE PUT avant valid");
         if (valider.valid) {
-            console.log("DANS LE PUT valid");
             mongoDbConnection(function (dbConnection) {
                 dbConnection.collection('dossiers').update({
                     'codePermanent': modifsDossiers.codePermanent
@@ -418,8 +415,8 @@ router.get('/groupes/:oid', function (req, res) {
         if (idValideRegEx.test(idGroupe)) {
             mongoDbConnection(function (dbConnection) {
                 dbConnection.collection('groupesCours').find({
-                        '_id': BSON.ObjectID.createFromHexString(idGroupe)
-                    }).toArray(
+                    '_id': BSON.ObjectID.createFromHexString(idGroupe)
+                }).toArray(
                     function (err, result) {
                         if (err) {
                             res.json(500, {
@@ -455,8 +452,32 @@ Méthode : POST
 URL : /groupes
 */
 router.post('/groupes', function (req, res) {
-
+    var groupeToAdd = req.body
     try {
+        var valider = v.validate(groupeToAdd, schemaGroupesPOST);
+        if (valider.valid) {
+            mongoDbConnection(function (dbConnection) {
+                dbConnection.collection('groupesCours').
+                insert(groupeToAdd,
+                    function (err, result) {
+                        if (err) {
+                            res.json(500, {
+                                error: err
+                            });
+                        } else {
+                            res.json(200, {
+                                msg: 'OK'
+                            });
+                        }
+                    });
+            });
+
+
+        } else {
+            res.json(500, {
+                msg: "Erreur dnas le format du json"
+            });
+        }
 
     } catch (error) {
         res.json(500, {
@@ -474,8 +495,9 @@ Méthode : PUT
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 */
 router.put('/groupes/:oid', function (req, res) {
-
+    var idGroupe = req.params.oid;
     try {
+
 
     } catch (error) {
         res.json(500, {
