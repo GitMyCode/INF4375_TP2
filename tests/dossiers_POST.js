@@ -50,6 +50,8 @@ requestify.request('http://localhost:3000/dossiers', {
     console.log("Réponse serveur - code : " + response.getCode());
     console.log("Réponse serveur - body: " + response.body);
     console.log("Réponse serveur - error: " + response.error);
+},function(err){
+    console.log(err);
 });
 
 requestify.request('http://localhost:3000/dossiers', {

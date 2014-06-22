@@ -1,10 +1,13 @@
 var express = require('express');
 var mongodb = require('mongodb');
-var createSchema = require('json-gate').createSchema;
-var Validator = require('jsonschema').Validator;
+var BSON = require('mongodb').BSONPure;
+var createSchema = require('json-gate')
+    .createSchema;
+var Validator = require('jsonschema')
+    .Validator;
 var mongoDbConnection = require('./connection.js');
 
-//var BSON = mongodb.BSONPure;
+
 
 var router = express.Router();
 var v = new Validator();
@@ -140,7 +143,7 @@ var schemaDossierPUT = {
 
 
 /* GET home page. */
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     res.render('index', {
         title: 'Express'
     });
@@ -148,7 +151,7 @@ router.get('/', function(req, res) {
 
 
 /* GET Hello World page. */
-router.get('/helloworld', function(req, res) {
+router.get('/helloworld', function (req, res) {
     res.render('helloworld', {
         title: 'Hello, World!'
     })
@@ -159,20 +162,22 @@ Description : Envoie au client le dossier complet de l'étudiant, en format JSON
 Méthode : GET
 URL : /dossiers/:cp (où cp est le code permanent de l'étudiant)
 */
-router.get('/dossiers/:cp', function(req, res) {
+router.get('/dossiers/:cp', function (req, res) {
     var cp = req.params.cp;
-    mongoDbConnection(function(dbConnection) {
-        dbConnection.collection('dossiers').find({
-            "codePermanent": cp
-        }, {
-            _id: false
-        }).toArray(function(err, items) {
-            res.json(items);
-        });
+    mongoDbConnection(function (dbConnection) {
+        dbConnection.collection('dossiers')
+            .find({
+                "codePermanent": cp
+            }, {
+                _id: false
+            })
+            .toArray(function (err, items) {
+                res.json(items);
+            });
     });
 });
 
-router.get('/dossiers', function(req, res) {
+router.get('/dossiers', function (req, res) {
     res.render('dossiers', {
         title: 'Express'
     });
@@ -185,7 +190,7 @@ même que celle stockée dans mongodb, à l'exception de la propriété _id qui 
 présente. Si la structure n'est pas la bonne, la requête est rejetée.
 Méthode : POST
 URL : /dossiers*/
-router.post('/dossiers', function(req, res) {
+router.post('/dossiers', function (req, res) {
     var newDossier = req.body;
 
     try {
@@ -193,18 +198,19 @@ router.post('/dossiers', function(req, res) {
         if (valider.valid === true) {
             console.log("valid");
 
-            mongoDbConnection(function(dbConnection) {
-                dbConnection.collection('dossiers').insert(newDossier, function(err, result) {
-                    if (err) {
-                        res.json(500, {
-                            error: err
-                        });
-                    } else {
-                        res.json(200, {
-                            msg: 'OK'
-                        });
-                    }
-                });
+            mongoDbConnection(function (dbConnection) {
+                dbConnection.collection('dossiers')
+                    .insert(newDossier, function (err, result) {
+                        if (err) {
+                            res.json(500, {
+                                error: err
+                            });
+                        } else {
+                            res.json(200, {
+                                msg: 'OK'
+                            });
+                        }
+                    });
             });
 
         } else {
@@ -228,7 +234,7 @@ Description : Reçoit du client l'ensemble des modifications à apporter au doss
 et les applique au dossier. Le document JSON est encodé dans le body de la requête HTTP.
 Méthode : PUT
 URL : /dossiers/:cp (où cp est le code permanent de l'étudiant)*/
-router.put('/dossiers/:cp', function(req, res) {
+router.put('/dossiers/:cp', function (req, res) {
     var modifsDossiers = req.body;
 
     try {
@@ -236,12 +242,12 @@ router.put('/dossiers/:cp', function(req, res) {
         console.log("DANS LE PUT avant valid");
         if (valider.valid) {
             console.log("DANS LE PUT valid");
-            mongoDbConnection(function(dbConnection) {
+            mongoDbConnection(function (dbConnection) {
                 dbConnection.collection('dossiers').update({
                     'codePermanent': modifsDossiers.codePermanent
                 }, {
                     $set: modifsDossiers
-                }, function(err, result) {
+                }, function (err, result) {
                     if (err) {
                         res.json(500, {
                             error: err
@@ -275,7 +281,7 @@ Description : Supprime le dossier de l'étudiant. Il est impossible de supprimer
 l'étudiant a déjà complété un cours avec succès.
 Méthode : DELETE
 URL : /dossiers/:cp (où cp est le code permanent de l'étudiant)*/
-router.delete('/dossiers/:cp', function(req, res) {
+router.delete('/dossiers/:cp', function (req, res) {
     var cpDossierToDelete = req.params.cp;
     var isValideRegEx = new RegExp("^[A-Z]{4}[0-9]{8}$");
 
@@ -284,56 +290,41 @@ router.delete('/dossiers/:cp', function(req, res) {
             console.log("ok validation a passer");
 
 
-            mongoDbConnection(function(dbConnection) {
+            mongoDbConnection(function (dbConnection) {
                 var collection = dbConnection.collection("dossiers");
                 collection.find({
                     'codePermanent': cpDossierToDelete
-                }).toArray(
-                    function(err, result) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-
-                            //console.log(result[0].inscriptions[0]);
-                            console.log(checkSuccededCours(result[0]));
-                            if (!checkSuccededCours(result[0])) { // check
-                                collection.remove({
-                                        'codePermanent': cpDossierToDelete
-                                    },
-                                    function(err, result) {
-                                        if (err) {
-                                            res.json(500, {
-                                                error: err
-                                            });
-                                        } else {
-                                            res.json(200, {
-                                                msg: "OK"
-                                            });
-                                        }
-                                    });
+                })
+                    .toArray(
+                        function (err, result) {
+                            if (err) {
+                                console.log(err);
                             } else {
-                                res.json(500, {
-                                    error: "Le dossiers a des cours reussis"
-                                });
-                            }
-                            /*
-                        dbConnection.collection('dossiers').remove({
-                                'codePermanent': cpDossierToDelete
-                            },
-                            function(err, result) {
-                                if (err) {
-                                    res.json(500, {
-                                        error: err
-                                    });
+
+                                //console.log(result[0].inscriptions[0]);
+                                console.log(checkSuccededCours(result[0]));
+                                if (!checkSuccededCours(result[0])) { // check
+                                    collection.remove({
+                                            'codePermanent': cpDossierToDelete
+                                        },
+                                        function (err, result) {
+                                            if (err) {
+                                                res.json(500, {
+                                                    error: err
+                                                });
+                                            } else {
+                                                res.json(200, {
+                                                    msg: "OK"
+                                                });
+                                            }
+                                        });
                                 } else {
-                                    res.json(200, {
-                                        msg: "OK"
+                                    res.json(500, {
+                                        error: "Le dossiers a des cours reussis"
                                     });
                                 }
-                            });*/
-
+                            }
                         }
-                    }
                 );
 
 
@@ -358,12 +349,111 @@ router.delete('/dossiers/:cp', function(req, res) {
 
 });
 
+/*GET /groupes
+Description : Envoie au client les données d'un groupe-cours, en format JSON.
+Méthode : GET
+URL : /groupes/:oid (où oid est l'ObjectId du groupe)
+*/
+router.get('/groupes/:oid', function (req, res) {
+    var idGroupe = req.params.oid;
+    var idValideRegEx = new RegExp("^[0-9a-fA-F]{24}$");
+    try {
+        if (idValideRegEx.test(idGroupe)) {
+            mongoDbConnection(function (dbConnection) {
+                dbConnection.collection('groupesCours').find({
+                        '_id': BSON.ObjectID.createFromHexString(idGroupe)
+                    }).toArray(
+                    function (err, result) {
+                        if (err) {
+                            res.json(500, {
+                                error: errr
+                            });
+                        } else {
+                            res.json(result);
+                        }
+                    });
+            });
+
+
+        } else {
+            res.json(500, {
+                msg: "id non valid"
+            });
+        }
+    } catch (error) {
+        res.json(500, {
+            error: error.toString()
+        });
+    }
+
+});
+
+
+/*POST /groupes
+Description : Reçoit du client les données complètes d'un groupe-cours, en format JSON, et crée le
+groupe-cours. Le document JSON est encodé dans le body de la requête HTTP. La structure de
+l'objet doit être la même que celle stockée dans mongodb, à l'exception de la propriété _id qui ne
+doit pas être présente. Si la structure n'est pas la bonne, la requête est rejetée.
+Méthode : POST
+URL : /groupes
+*/
+router.post('/groupes', function (req, res) {
+
+    try {
+
+    } catch (error) {
+        res.json(500, {
+            error: error.toString()
+        });
+    }
+
+});
+
+/*PUT /groupes/:oid
+Description : Reçoit du client l'ensemble des modifications à apporter au groupe-cours, en format
+JSON, et les applique au groupe-cours. Le document JSON est encodé dans le body de la requête
+HTTP.
+Méthode : PUT
+URL : /groupes/:oid (où oid est l'ObjectId du groupe)
+*/
+router.put('/groupes/:oid', function (req, res) {
+
+    try {
+
+    } catch (error) {
+        res.json(500, {
+            error: error.toString()
+        });
+    }
+
+});
+
+/*DELETE /groupes/:oid
+Description : Supprime le groupe-cours. Il est impossible de supprimer un groupe-cours des
+étudiants y sont inscrits.
+Méthode : DELETE
+URL : /groupes/:oid (où oid est l'ObjectId du groupe)
+*/
+router.delete('/groupes/:oid', function (req, res) {
+
+    try {
+
+    } catch (error) {
+        res.json(500, {
+            error: error.toString()
+        });
+    }
+
+});
+
+
+
 module.exports = router;
 
 
 
 /* private methdoe */
-var checkSuccededCours = function(dossier) {
+var checkSuccededCours = function (dossier) {
 
     if (dossier.coursReussis.length > 0) {
         return true;
