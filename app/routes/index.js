@@ -62,7 +62,8 @@ var schemaDossierPOST = {
             "type": "string",
             "required": true
         }
-    }
+    },
+    additionalProperties: false
 }
 
 var schemaDossierPUT = {
@@ -117,7 +118,8 @@ var schemaDossierPUT = {
             "type": "string",
             "required": false
         }
-    }
+    },
+    additionalProperties: false
 }
 
 

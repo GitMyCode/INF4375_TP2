@@ -22,9 +22,20 @@ var unDossier = {
 }
 
 var unMauvaisDossier = {
-
-    'dsdsdsd' : "BOUM15078700"
-
+    "_id" : 324241254235,
+    "nom" : "test_nom",
+    "prenom" : "test_prenom",
+    "codePermanent" : "BOUM15078700",
+    "sexe" : "2",
+    "dateNaissance" : "1987-07-15",
+    "inscriptions" : [
+        {
+            "sigle": "INF4375",
+            "group": "10",
+            "session" : "20142",
+            "noteFinale" : "95"
+        }
+    ]
 }
 
 
@@ -48,5 +59,7 @@ requestify.request('http://localhost:3000/dossiers', {
     console.log("Réponse serveur - code : " + response.getCode());
     console.log("Réponse serveur - body: " + response.body);
     console.log("Réponse serveur - error: " + response.error);
+},function(err){
+    console.log(err);
 });
 
