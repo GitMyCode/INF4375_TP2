@@ -2,7 +2,7 @@ var requestify = require('requestify');
 var async = require('async');
 
 var unDossier = {
-    "nom" : "test_nom",
+    "nom" : "OUI",
     "prenom" : "test_prenom",
     "codePermanent" : "BOUM15078700",
     "sexe" : "2",
@@ -15,7 +15,6 @@ var unDossier = {
             "noteFinale" : "95"
         }
     ],
-    ,
     "coursReussis" : [
         "INF4375"
     ]
@@ -86,21 +85,21 @@ async.series([
 
     },
 
-    function modifierUnEditeur2(callback) {
-        console.log("\n\nModification de l'éditeur (2).");
+    function modifierUnDossier2(callback) {
+        console.log("\n\nModification du dossier (2).");
         console.log("_id de l'éditeur à modifier: " + cpDossierAModifier);
 
-        var modifEditeur2 = {
-            'codePermanent': codePermanent,
+        var modifDossiers2 = {
+            'codePermanent': cpDossierAModifier.toString(),
             "GUI": "no",
             "website": "www.vim.org"
         };
 
-        console.log("\nModifications à apporter: " + JSON.stringify(modifEditeur2, null, 4));
+        console.log("\nModifications à apporter: " + JSON.stringify(modifDossiers2, null, 4));
 
         requestify.request('http://localhost:3000/dossiers/' + cpDossierAModifier,
             {method: 'PUT',
-             body: modifEditeur2,
+             body: modifDossiers2,
              dataType: 'json'}
 
         ).then(function(response) {
@@ -108,13 +107,13 @@ async.series([
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierUnEditeur2');
+            callback(null, 'modifierUnDossier2');
 
         }).fail(function(response) {
             console.log("Réponse serveur - code : " + response.getCode());
             console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierUnEditeur2');
+            callback(null, 'modifierUnDossier2');
         });
 
     },

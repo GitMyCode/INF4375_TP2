@@ -42,7 +42,7 @@ var schemaDossierPOST = {
             "required": true,
             "items": {
                 "type": "object",
-                "required": true,
+                "required": false,
                 "properties": {
                     "group": {
                         "type": "string",
@@ -131,11 +131,68 @@ var schemaDossierPUT = {
         },
         "coursReussis": {
             "type": "array",
-            "required": true,
+            "required": false,
             "items": {
                 "type": "string"
             }
         }
+    },
+    additionalProperties: false
+}
+
+var schemaGroupesPOST = {
+    "type": "object",
+    "required": true,
+    "properties": {
+        "sigle": {
+            "type" : "string",
+            "required" : true
+        },
+        "nomCours": {
+            "type": "string",
+            "required": true
+        },
+        "groupe": {
+            "type": "string",
+            "required": false
+        },
+        "session": {
+            "type": "string",
+            "required": false
+        },
+        "moyenne": {
+            "type": "integer",
+            "required": false
+        },
+        "listeEtudiant": {
+            "type": "array",
+            "required": false,
+            "items": {
+                "type": "object",
+                "required": false,
+                "properties": {
+                    "group": {
+                        "type": "string",
+                        "required": false
+                    },
+                    "noteFinale": {
+                        "type": "string",
+                        "required": false
+                    },
+                    "session": {
+                        "type": "string",
+                        "required": false
+                    },
+                    "sigle": {
+                        "type": "string",
+                        "required": false
+                    }
+                }
+            }
+
+
+        },
+        additionalProperties: false
     },
     additionalProperties: false
 }
