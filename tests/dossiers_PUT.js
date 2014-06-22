@@ -60,8 +60,7 @@ async.series([
         console.log("cp de l'éditeur à modifier: " + cpDossierAModifier);
 
         var modifDossiers1 = {
-            "nom": "ok",
-            "codePermanent" : cpDossierAModifier.toString()
+            "nom": "ok"
         };
         console.log("\nModifications à apporter: " + JSON.stringify(modifDossiers1, null, 4));
 
@@ -90,7 +89,6 @@ async.series([
         console.log("_id de l'éditeur à modifier: " + cpDossierAModifier);
 
         var modifDossiers2 = {
-            'codePermanent': cpDossierAModifier.toString(),
             "GUI": "no",
             "website": "www.vim.org"
         };

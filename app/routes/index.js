@@ -83,7 +83,7 @@ var schemaDossierPUT = {
     "properties": {
         "codePermanent": {
             "type": "string",
-            "required": true
+            "required": false
         },
         "dateNaissance": {
             "type": "string",
@@ -291,6 +291,7 @@ et les applique au dossier. Le document JSON est encodé dans le body de la requ
 Méthode : PUT
 URL : /dossiers/:cp (où cp est le code permanent de l'étudiant)*/
 router.put('/dossiers/:cp', function (req, res) {
+    var cpDossierToModif = req.params.cp;
     var modifsDossiers = req.body;
 
     try {
@@ -298,7 +299,7 @@ router.put('/dossiers/:cp', function (req, res) {
         if (valider.valid) {
             mongoDbConnection(function (dbConnection) {
                 dbConnection.collection('dossiers').update({
-                    'codePermanent': modifsDossiers.codePermanent
+                    'codePermanent': cpDossierToModif
                 }, {
                     $set: modifsDossiers
                 }, function (err, result) {
@@ -496,7 +497,9 @@ URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 */
 router.put('/groupes/:oid', function (req, res) {
     var idGroupe = req.params.oid;
+    var modifGroupe = req.body;
     try {
+        var valider = v.validate(groupeToAdd, schemaGroupesPOST);
 
 
     } catch (error) {
