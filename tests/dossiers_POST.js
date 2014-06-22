@@ -6,7 +6,7 @@ var test = {
 }
 
 var unDossier = {
-    "nom" : "test_nom",
+    "nom" : "OUI",
     "prenom" : "test_prenom",
     "codePermanent" : "BOUM15078700",
     "sexe" : "2",
@@ -23,7 +23,7 @@ var unDossier = {
 
 var unMauvaisDossier = {
     "_id" : 324241254235,
-    "nom" : "test_nom",
+    "nom" : "NON",
     "prenom" : "test_prenom",
     "codePermanent" : "BOUM15078700",
     "sexe" : "2",

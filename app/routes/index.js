@@ -244,9 +244,7 @@ router.put('/dossiers/:cp', function(req, res) {
             res.send(500, {
                 body: "Structure du json invalid"
             })
-
         }
-
     } catch (error) {
         console.log("Erreur: " + error.toString());
         res.json(500, {
@@ -270,22 +268,40 @@ router.delete('/dossiers/:cp', function(req, res) {
 
     if (isValideRegEx.test(cpDossierToDelete)) {
         console.log("ok validation a passer");
+
+
         mongoDbConnection(function(dbConnection) {
-            dbConnection.collection('dossiers').remove({
+            dbConnection.collection('dossiers').find({
                     'codePermanent': cpDossierToDelete
                 },
                 function(err, result) {
                     if (err) {
-                        console.log("dfjnasdkfn");
-                        res.json(500, {
-                            error: err
-                        });
+
                     } else {
-                        res.json(200, {
-                            msg: "OK"
-                        });
+
+                        console.log(JSON.serialize(result));
+
+
+                        dbConnection.collection('dossiers').remove({
+                                'codePermanent': cpDossierToDelete
+                            },
+                            function(err, result) {
+                                if (err) {
+                                    res.json(500, {
+                                        error: err
+                                    });
+                                } else {
+                                    res.json(200, {
+                                        msg: "OK"
+                                    });
+                                }
+                            });
+
                     }
-                });
+                }
+            );
+
+
         });
 
     } else {

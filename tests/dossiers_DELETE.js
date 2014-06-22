@@ -2,7 +2,7 @@ var requestify = require('requestify');
 var async = require('async');
 
 var dossier1 = {
-    "nom" : "test_nom",
+    "nom" : "OUI",
     "prenom" : "test_prenom",
     "codePermanent" : "BOUM15078700",
     "sexe" : "2",
@@ -18,7 +18,7 @@ var dossier1 = {
 };
 
 var dossier2 = {
-    "nom" : "test_nom2",
+    "nom" : "NON",
     "prenom" : "test_prenom2",
     "codePermanent" : "BOUM15078702",
     "sexe" : "2",
@@ -87,7 +87,7 @@ async.series([
     },
 
     function supprimerUnDossier(callback) {
-        console.log("Suppression du deuxième éditeur");
+        console.log("Suppression du dossier");
         console.log("_id de l'éditeur à supprimer: " + cpDossierAModifier);
 
         requestify.delete('http://localhost:3000/dossiers/' + cpDossierAModifier).then(function(response) {
