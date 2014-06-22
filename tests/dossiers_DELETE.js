@@ -14,7 +14,8 @@ var dossier1 = {
             "session" : "20142",
             "noteFinale" : "45"
         }
-    ]
+    ],
+    "coursReussis" : []
 };
 
 var dossier2 = {
@@ -30,10 +31,12 @@ var dossier2 = {
             "session" : "20142",
             "noteFinale" : "95"
         }
-    ]
+    ],
+    "coursReussis" : ["INF4375"]
 };
 
 var cpDossierAModifier = 'BOUM15078700';
+var cpDossierAModifier2 = 'BOUM15078702';
 
 async.series([
 
@@ -53,7 +56,7 @@ async.series([
             callback(null, 'insererUnDossier');
         });
 
-    }/*,
+    },
 
     function insererUnDossier2(callback) {
         console.log("Insertion d'un éditeur dans la base de données.");
@@ -71,13 +74,20 @@ async.series([
             callback(null, 'insererUnDossier');
         });
 
-    }*/,
+    },
 
     function getDossiers(callback) {
 
         console.log("Consultation de tous les éditeurs dans la base de donnéés.");
 
         requestify.get('http://localhost:3000/dossiers/'+ cpDossierAModifier).then(function(response) {
+
+            console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
+            //cpDossierAModifier = response.getBody()[0]['codePermanent'];
+
+            callback(null, 'getDossiers');
+        });
+        requestify.get('http://localhost:3000/dossiers/'+ cpDossierAModifier2).then(function(response) {
 
             console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
             //cpDossierAModifier = response.getBody()[0]['codePermanent'];

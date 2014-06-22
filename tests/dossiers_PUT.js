@@ -14,6 +14,10 @@ var unDossier = {
             "session" : "20142",
             "noteFinale" : "95"
         }
+    ],
+    ,
+    "coursReussis" : [
+        "INF4375"
     ]
 }
 

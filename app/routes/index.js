@@ -22,6 +22,18 @@ var schemaDossierPOST = {
             "type": "string",
             "required": true
         },
+        "nom": {
+            "type": "string",
+            "required": true
+        },
+        "prenom": {
+            "type": "string",
+            "required": true
+        },
+        "sexe": {
+            "type": "string",
+            "required": true
+        },
         "inscriptions": {
             "type": "array",
             "required": true,
@@ -50,18 +62,14 @@ var schemaDossierPOST = {
 
 
         },
-        "nom": {
-            "type": "string",
-            "required": true
-        },
-        "prenom": {
-            "type": "string",
-            "required": true
-        },
-        "sexe": {
-            "type": "string",
-            "required": true
+        "coursReussis": {
+            "type": "array",
+            "required": true,
+            "items": {
+                "type": "string"
+            }
         }
+
     },
     additionalProperties: false
 }
@@ -75,6 +83,18 @@ var schemaDossierPUT = {
             "required": true
         },
         "dateNaissance": {
+            "type": "string",
+            "required": false
+        },
+        "nom": {
+            "type": "string",
+            "required": false
+        },
+        "prenom": {
+            "type": "string",
+            "required": false
+        },
+        "sexe": {
             "type": "string",
             "required": false
         },
@@ -106,17 +126,12 @@ var schemaDossierPUT = {
 
 
         },
-        "nom": {
-            "type": "string",
-            "required": false
-        },
-        "prenom": {
-            "type": "string",
-            "required": false
-        },
-        "sexe": {
-            "type": "string",
-            "required": false
+        "coursReussis": {
+            "type": "array",
+            "required": true,
+            "items": {
+                "type": "string"
+            }
         }
     },
     additionalProperties: false
@@ -264,24 +279,44 @@ router.delete('/dossiers/:cp', function(req, res) {
     var cpDossierToDelete = req.params.cp;
     var isValideRegEx = new RegExp("^[A-Z]{4}[0-9]{8}$");
 
+    try {
+        if (isValideRegEx.test(cpDossierToDelete)) {
+            console.log("ok validation a passer");
 
 
-    if (isValideRegEx.test(cpDossierToDelete)) {
-        console.log("ok validation a passer");
-
-
-        mongoDbConnection(function(dbConnection) {
-            dbConnection.collection('dossiers').find({
+            mongoDbConnection(function(dbConnection) {
+                var collection = dbConnection.collection("dossiers");
+                collection.find({
                     'codePermanent': cpDossierToDelete
-                },
-                function(err, result) {
-                    if (err) {
+                }).toArray(
+                    function(err, result) {
+                        if (err) {
+                            console.log(err);
+                        } else {
 
-                    } else {
-
-                        console.log(JSON.serialize(result));
-
-
+                            //console.log(result[0].inscriptions[0]);
+                            console.log(checkSuccededCours(result[0]));
+                            if (!checkSuccededCours(result[0])) { // check
+                                collection.remove({
+                                        'codePermanent': cpDossierToDelete
+                                    },
+                                    function(err, result) {
+                                        if (err) {
+                                            res.json(500, {
+                                                error: err
+                                            });
+                                        } else {
+                                            res.json(200, {
+                                                msg: "OK"
+                                            });
+                                        }
+                                    });
+                            } else {
+                                res.json(500, {
+                                    error: "Le dossiers a des cours reussis"
+                                });
+                            }
+                            /*
                         dbConnection.collection('dossiers').remove({
                                 'codePermanent': cpDossierToDelete
                             },
@@ -295,22 +330,50 @@ router.delete('/dossiers/:cp', function(req, res) {
                                         msg: "OK"
                                     });
                                 }
-                            });
+                            });*/
 
+                        }
                     }
-                }
-            );
+                );
 
 
-        });
+            });
 
-    } else {
-        console.log("invalid: " + valider.error);
-        res.send(500, {
-            body: "Structure du json invalid"
+        } else {
+            console.log("invalid: " + valider.error);
+            res.send(500, {
+                body: "Structure du json invalid"
+            })
+        }
+
+
+    } catch (error) {
+        console.log("Erreur: " + error.toString());
+        res.json(500, {
+            error: error.toString()
         })
     }
+
+
 
 });
 
 module.exports = router;
+
+
+
+/* private methdoe */
+var checkSuccededCours = function(dossier) {
+
+    if (dossier.coursReussis.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
+    for (var i = 0; i < dossier.inscriptions.length; i++) {
+        unCours = dossier.inscriptions[i];
+
+        console.log(unCours);
+    }
+
+}

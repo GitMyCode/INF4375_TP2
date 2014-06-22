@@ -18,11 +18,13 @@ var unDossier = {
             "session" : "20142",
             "noteFinale" : "95"
         }
+    ],
+    "coursReussis" : [
+        "INF4375"
     ]
 }
 
 var unMauvaisDossier = {
-    "_id" : 324241254235,
     "nom" : "NON",
     "prenom" : "test_prenom",
     "codePermanent" : "BOUM15078700",
