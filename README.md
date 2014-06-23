@@ -13,7 +13,7 @@ Description : Envoie au client le dossier complet de l'étudiant, en format JSON
 Méthode : GET   
 URL : /dossiers/:cp (où cp est le code permanent de l'étudiant)     
 
-**Entré **.  
+**Entré**  
 params ->   :cp  (codePermanent)    
 body ->
 
@@ -165,10 +165,10 @@ Méthode : GET
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 
 
-** Entré**  
+**Entré**  
 params ->   :oid  (object id)   
 body ->     
-** Sortie**     
+**Sortie**     
 Json object du groupe
 
 
@@ -182,7 +182,7 @@ Méthode : POST
 URL : /groupes
 
 
-** Entré**  
+**Entré**  
 params ->   
 body -> 
 ```sh
@@ -242,7 +242,7 @@ body ->
     additionalProperties: false
 }
 ```
-** Sortie**   
+**Sortie**   
 Success message
 
 
@@ -256,7 +256,7 @@ Méthode : PUT
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 
 
-** Entré **         
+**Entré**         
 params ->   :oid  (object id)   
 body ->     
 ```sh
@@ -316,7 +316,7 @@ body ->
     additionalProperties: false
 }
 ```
-** Sortie **    
+**Sortie**    
 Success message
 
 
@@ -329,9 +329,9 @@ Méthode : DELETE
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 
 
-** Entré **     
+**Entré**     
 params ->   :oid  (object id)       
 body ->     
-** Sortie **    
+**Sortie**    
 Success message
 
