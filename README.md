@@ -122,7 +122,7 @@ body ->
                 "type": "object",
                 "required": false,
                 "properties": {
-                    "group": {"type": "string", "required": false }, "noteFinale": {"type": "string", "required": false }, "session": {"type": "string", "required": false }, "sigle": {"type": "string", "required": false } }
+                    "group": {"type": "string", "required": true }, "noteFinale": {"type": "string", "required": true }, "session": {"type": "string", "required": true }, "sigle": {"type": "string", "required": true } }
             }
 
 
