@@ -97,19 +97,19 @@ module.exports.schemaDossierPUT = {
                 "properties": {
                     "group": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     },
                     "noteFinale": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     },
                     "session": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     },
                     "sigle": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     }
                 }
             }
@@ -216,19 +216,19 @@ module.exports.schemaGroupesPUT = {
                 "properties": {
                     "codePermanent": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     },
                     "nom": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     },
                     "prenom": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     },
                     "noteFinale": {
                         "type": "string",
-                        "required": false
+                        "required": true
                     }
                 }
             }

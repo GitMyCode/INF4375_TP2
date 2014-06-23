@@ -42,7 +42,7 @@ async.series([
 
     },
 
-    function getDossiers(callback) {
+ /*   function getDossiers(callback) {
 
         console.log("Consultation de tous les éditeurs dans la base de donnéés.");
 
@@ -53,14 +53,18 @@ async.series([
 
             callback(null, 'getDossiers');
         });
-    },
+    },*/
 
     function modifierUnDossier(callback) {
         console.log("\n\nModification de l'éditeur (1).");
         console.log("cp de l'éditeur à modifier: " + cpDossierAModifier);
 
         var modifDossiers1 = {
-            "nom": "ok"
+            "nom": "ok",
+
+            "inscriptions.0.sigle": "INF4000"
+
+
         };
         console.log("\nModifications à apporter: " + JSON.stringify(modifDossiers1, null, 4));
 
