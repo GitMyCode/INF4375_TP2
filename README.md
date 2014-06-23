@@ -204,7 +204,7 @@ body -> {   //DOIT respecter ce schema
             "required": true,
             "items": {
                 "type": "object",
-                "required": true,
+                "required": false,
                 "properties": {
                     "codePermanent": {
                         "type": "string",
@@ -316,4 +316,4 @@ URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 params ->   :oid  (object id)
 body ->
 ** Sortie
-Json object du groupe
+Success message

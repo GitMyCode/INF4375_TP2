@@ -413,7 +413,7 @@ router.delete('/groupes/:oid', function (req, res) {
                             });
                         } else {
                             console.log("Le groupe a des étudiants inscrits");
-                            res.json(500, {
+                            res.json(400, {
                                 error: "Le groupe a des étudiants inscrits"
                             });
                         }
