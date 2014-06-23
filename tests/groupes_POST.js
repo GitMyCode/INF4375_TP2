@@ -17,7 +17,7 @@ var unGroupe = {
     ]
 }
 
-var unMauvaisDossier = {
+var unMauvaisGroupe = {
     "nom" : "NON",
     "prenom" : "test_prenom",
     "codePermanent" : "BOUM15078700",
@@ -49,7 +49,7 @@ requestify.request('http://localhost:3000/groupes', {
 
 requestify.request('http://localhost:3000/groupes', {
     method: 'POST',
-    body: unMauvaisDossier,
+    body: unMauvaisGroupe,
     dataType: 'json'
 }).then(function(response) {
     console.log("----- MAUVAISE STRUCTURE -----")

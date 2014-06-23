@@ -11,190 +11,7 @@ var mongoDbConnection = require('./connection.js');
 
 var router = express.Router();
 var v = new Validator();
-
-
-var schemaDossierPOST = {
-    "type": "object",
-    "required": true,
-    "properties": {
-        "codePermanent": {
-            "type": "string",
-            "required": true
-        },
-        "dateNaissance": {
-            "type": "string",
-            "required": true
-        },
-        "nom": {
-            "type": "string",
-            "required": true
-        },
-        "prenom": {
-            "type": "string",
-            "required": true
-        },
-        "sexe": {
-            "type": "string",
-            "required": true
-        },
-        "inscriptions": {
-            "type": "array",
-            "required": true,
-            "items": {
-                "type": "object",
-                "required": false,
-                "properties": {
-                    "group": {
-                        "type": "string",
-                        "required": true
-                    },
-                    "noteFinale": {
-                        "type": "string",
-                        "required": true
-                    },
-                    "session": {
-                        "type": "string",
-                        "required": true
-                    },
-                    "sigle": {
-                        "type": "string",
-                        "required": true
-                    }
-                }
-            }
-
-
-        },
-        "coursReussis": {
-            "type": "array",
-            "required": true,
-            "items": {
-                "type": "string"
-            }
-        }
-
-    },
-    additionalProperties: false
-}
-
-var schemaDossierPUT = {
-    "type": "object",
-    "required": true,
-    "properties": {
-        "codePermanent": {
-            "type": "string",
-            "required": false
-        },
-        "dateNaissance": {
-            "type": "string",
-            "required": false
-        },
-        "nom": {
-            "type": "string",
-            "required": false
-        },
-        "prenom": {
-            "type": "string",
-            "required": false
-        },
-        "sexe": {
-            "type": "string",
-            "required": false
-        },
-        "inscriptions": {
-            "type": "array",
-            "required": false,
-            "items": {
-                "type": "object",
-                "required": false,
-                "properties": {
-                    "group": {
-                        "type": "string",
-                        "required": false
-                    },
-                    "noteFinale": {
-                        "type": "string",
-                        "required": false
-                    },
-                    "session": {
-                        "type": "string",
-                        "required": false
-                    },
-                    "sigle": {
-                        "type": "string",
-                        "required": false
-                    }
-                }
-            }
-
-
-        },
-        "coursReussis": {
-            "type": "array",
-            "required": false,
-            "items": {
-                "type": "string"
-            }
-        }
-    },
-    additionalProperties: false
-}
-
-var schemaGroupesPOST = {
-    "type": "object",
-    "required": true,
-    "properties": {
-        "sigle": {
-            "type": "string",
-            "required": true
-        },
-        "nomCours": {
-            "type": "string",
-            "required": true
-        },
-        "groupe": {
-            "type": "string",
-            "required": false
-        },
-        "session": {
-            "type": "string",
-            "required": false
-        },
-        "moyenne": {
-            "type": "float",
-            "required": false
-        },
-        "listeEtudiant": {
-            "type": "array",
-            "required": false,
-            "items": {
-                "type": "object",
-                "required": false,
-                "properties": {
-                    "codePermanent": {
-                        "type": "string",
-                        "required": true
-                    },
-                    "nom": {
-                        "type": "string",
-                        "required": true
-                    },
-                    "prenom": {
-                        "type": "string",
-                        "required": true
-                    },
-                    "noteFinale": {
-                        "type": "string",
-                        "required": true
-                    }
-                }
-            }
-
-
-        }
-    },
-    additionalProperties: false
-}
+var Schemas =  require('../support/schemas');
 
 
 
@@ -250,7 +67,7 @@ router.post('/dossiers', function (req, res) {
     var newDossier = req.body;
 
     try {
-        var valider = v.validate(newDossier, schemaDossierPOST);
+        var valider = v.validate(newDossier, Schemas.schemaDossierPOST);
         if (valider.valid === true) {
             console.log("valid");
 
@@ -295,7 +112,7 @@ router.put('/dossiers/:cp', function (req, res) {
     var modifsDossiers = req.body;
 
     try {
-        var valider = v.validate(modifsDossiers, schemaDossierPUT);
+        var valider = v.validate(modifsDossiers, Schemas.schemaDossierPUT);
         if (valider.valid) {
             mongoDbConnection(function (dbConnection) {
                 dbConnection.collection('dossiers').update({
@@ -404,7 +221,26 @@ router.delete('/dossiers/:cp', function (req, res) {
 
 });
 
-/*GET /groupes
+
+/*GET /groupes */
+router.get("/groupes/test/:sigle", function (req, res) {
+    mongoDbConnection(function (dbConnection) {
+        dbConnection.collection('groupesCours').find({'sigle' : req.params.sigle}).toArray(
+            function( err, result ){
+                if(err){
+                    res.json(500, {error : err});
+                }else{
+                        res.json(result[result.length-1]);
+                }
+            }
+        );
+    });
+
+});
+
+
+
+/*GET /groupes/:oid
 Description : Envoie au client les données d'un groupe-cours, en format JSON.
 Méthode : GET
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
@@ -455,7 +291,7 @@ URL : /groupes
 router.post('/groupes', function (req, res) {
     var groupeToAdd = req.body
     try {
-        var valider = v.validate(groupeToAdd, schemaGroupesPOST);
+        var valider = v.validate(groupeToAdd, Schemas.schemaGroupesPOST);
         if (valider.valid) {
             mongoDbConnection(function (dbConnection) {
                 dbConnection.collection('groupesCours').
@@ -476,7 +312,7 @@ router.post('/groupes', function (req, res) {
 
         } else {
             res.json(500, {
-                msg: "Erreur dnas le format du json"
+                msg: "Erreur dans le format du json"
             });
         }
 
@@ -496,10 +332,38 @@ Méthode : PUT
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 */
 router.put('/groupes/:oid', function (req, res) {
+    console.log("ICICICI")
     var idGroupe = req.params.oid;
     var modifGroupe = req.body;
     try {
-        var valider = v.validate(groupeToAdd, schemaGroupesPOST);
+        var valider = v.validate(modifGroupe, Schemas.schemaGroupesPUT);
+        if (valider.valid) {
+            mongoDbConnection(function (dbConnection) {
+                dbConnection.collection("groupesCours").update({
+                    '_id': BSON.ObjectID.createFromHexString(idGroupe)
+                }, {
+                    $set: modifGroupe
+                }, function (err, result) {
+
+                    if (err) {
+                        res.json(500, {
+                            error: err
+                        });
+                    } else {
+                        res.json(200, {
+                            msg: 'OK',
+                            nombreDocumentsAffectesParUpdate: result
+                        });
+                    }
+                });
+            });
+
+
+        } else {
+            res.json(500, {
+                msg: "Erreur dans le format du json"
+            });
+        }
 
 
     } catch (error) {
@@ -519,6 +383,7 @@ URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 router.delete('/groupes/:oid', function (req, res) {
 
     try {
+
 
     } catch (error) {
         res.json(500, {
