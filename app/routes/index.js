@@ -89,7 +89,7 @@ router.post('/dossiers', function (req, res) {
         } else {
             console.log("Structure du json invalid");
             res.json( 400, {
-                body: "Structure du json invalid"
+                error: "Structure du json invalid"
             });
         }
     } catch (error) {
@@ -126,7 +126,7 @@ router.put('/dossiers/:cp', function (req, res) {
                         });
                     } else {
                         res.json(200, {
-                            msg: 'OK :' + result
+                            msg: 'OK'
                         });
                     }
                 })
@@ -135,7 +135,7 @@ router.put('/dossiers/:cp', function (req, res) {
         } else {
             console.log("invalid: " + valider.error);
             res.send(400, {
-                body: "Structure du json invalid"
+                error: "Structure du json invalid"
             })
         }
     } catch (error) {
@@ -201,8 +201,8 @@ router.delete('/dossiers/:cp', function (req, res) {
 
         } else {
             console.log("invalid: " + valider.error);
-            res.send(500, {
-                body: "Structure du json invalid"
+            res.json(400, {
+                error: "Structure du json invalid"
             })
         }
 
@@ -269,7 +269,7 @@ router.get('/groupes/:oid', function (req, res) {
 
         } else {
             res.json(400, {
-                msg: "id non valid"
+                error: "id non valid"
             });
         }
     } catch (error) {
@@ -312,8 +312,8 @@ router.post('/groupes', function (req, res) {
 
 
         } else {
-            res.json(500, {
-                msg: "Erreur dans le format du json"
+            res.json(400, {
+                error: "Erreur dans le format du json"
             });
         }
 
@@ -361,7 +361,7 @@ router.put('/groupes/:oid', function (req, res) {
         } else {
             console.log("Erreur dans le format du json");
             res.json(400, {
-                msg: "Erreur dans le format du json"
+                error: "Erreur dans le format du json"
             });
         }
 
