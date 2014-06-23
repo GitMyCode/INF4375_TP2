@@ -30,6 +30,8 @@ router.get('/helloworld', function (req, res) {
     })
 });
 
+
+
 /* GET /dossier/:cp.
 Description : Envoie au client le dossier complet de l'étudiant, en format JSON.
 Méthode : GET
@@ -41,11 +43,9 @@ router.get('/dossiers/:cp', function (req, res) {
         dbConnection.collection('dossiers')
             .find({
                 "codePermanent": cp
-            }, {
-                _id: false
             })
             .toArray(function (err, items) {
-                res.json(items);
+                res.json(items[0]); // codePermanent est unique (supposé)
             });
     });
 });
@@ -87,13 +87,13 @@ router.post('/dossiers', function (req, res) {
             });
 
         } else {
-            console.log("invalid");
-            res.send(500, {
+            console.log("Structure du json invalid");
+            res.json(400, {
                 body: "Structure du json invalid"
             });
         }
     } catch (error) {
-        console.log("yo dans erreur  :" + error.toString());
+        console.log("Erreur: " + error.toString());
         res.json(500, {
             error: error.toString()
         });
@@ -134,7 +134,7 @@ router.put('/dossiers/:cp', function (req, res) {
 
         } else {
             console.log("invalid: " + valider.error);
-            res.send(500, {
+            res.send(400, {
                 body: "Structure du json invalid"
             })
         }
@@ -188,7 +188,8 @@ router.delete('/dossiers/:cp', function (req, res) {
                                     }
                                 });
                         } else {
-                            res.json(500, {
+                            console.log("Le dossiers a des cours reussis");
+                            res.json(400, {
                                 error: "Le dossiers a des cours reussis"
                             });
                         }
@@ -217,7 +218,7 @@ router.delete('/dossiers/:cp', function (req, res) {
 
 });
 
-
+// POUR TEST SEULEMENT
 /*GET /groupes */
 router.get("/groupes/test/:sigle", function (req, res) {
     mongoDbConnection(function (dbConnection) {
@@ -267,7 +268,7 @@ router.get('/groupes/:oid', function (req, res) {
 
 
         } else {
-            res.json(500, {
+            res.json(400, {
                 msg: "id non valid"
             });
         }
@@ -332,7 +333,6 @@ Méthode : PUT
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 */
 router.put('/groupes/:oid', function (req, res) {
-    console.log("ICICICI")
     var idGroupe = req.params.oid;
     var modifGroupe = req.body;
     try {
@@ -352,7 +352,6 @@ router.put('/groupes/:oid', function (req, res) {
                     } else {
                         res.json(200, {
                             msg: 'OK',
-                            nombreDocumentsAffectesParUpdate: result
                         });
                     }
                 });
@@ -360,7 +359,8 @@ router.put('/groupes/:oid', function (req, res) {
 
 
         } else {
-            res.json(500, {
+            console.log("Erreur dans le format du json");
+            res.json(400, {
                 msg: "Erreur dans le format du json"
             });
         }
@@ -405,12 +405,14 @@ router.delete('/groupes/:oid', function (req, res) {
                                         error: err
                                     });
                                 }else{
+                                    console.log("groupe supprimé");
                                     res.json(200,{
                                         msg: "groupe supprimé"
                                     });
                                 }
                             });
                         } else {
+                            console.log("Le groupe a des étudiants inscrits");
                             res.json(500, {
                                 error: "Le groupe a des étudiants inscrits"
                             });
@@ -447,7 +449,7 @@ var checkIfSuccededCours = function (dossier) {
 
 var checkIfInscriptionCours = function (groupe) {
 
-    if (groupe.ListeEtudiant.length > 0) {
+    if (groupe.listeEtudiant.length > 0) {
         return true;
     } else {
         return false;
