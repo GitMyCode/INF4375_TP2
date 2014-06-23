@@ -111,7 +111,8 @@ body ->
     "type": "object",
     "required": true,
     "properties": {
-        "codePermanent": {"type": "string", "required": false }, "dateNaissance": {"type": "string", "required": false },
+        "codePermanent": {"type": "string", "required": false },
+        "dateNaissance": {"type": "string", "required": false },  
         "nom": {"type": "string", "required": false },
         "prenom": {"type": "string", "required": false },
         "sexe": {"type": "string", "required": false },
@@ -122,7 +123,10 @@ body ->
                 "type": "object",
                 "required": false,
                 "properties": {
-                    "group": {"type": "string", "required": true }, "noteFinale": {"type": "string", "required": true }, "session": {"type": "string", "required": true }, "sigle": {"type": "string", "required": true } }
+                    "group": {"type": "string", "required": true },   
+                    "noteFinale": {"type": "string", "required": true },   
+                    "session": {"type": "string", "required": true },   
+                    "sigle": {"type": "string", "required": true } }
             }
 
 
