@@ -2,35 +2,31 @@ var requestify = require('requestify');
 var async = require('async');
 
 var unGroupe = {
-    "sigle" : "OUI",
-    "nomCours" : "test_cours",
-    "groupe" : "90",
-    "session" : "20142",
-    "moyenne" : 68.63,
-    "listeEtudiant" : [
-        {
-            "codePermanent": "BOUM15078700",
-            "nom": "etudiant1",
-            "prenom" : "prenom",
-            "noteFinale" : "95"
-        }
-    ]
+    "sigle": "OUI",
+    "nomCours": "test_cours",
+    "groupe": "90",
+    "session": "20142",
+    "moyenne": 68.63,
+    "listeEtudiant": [{
+        "codePermanent": "BOUM15078700",
+        "nom": "etudiant1",
+        "prenom": "prenom",
+        "noteFinale": "95"
+    }]
 }
 
 var unMauvaisGroupe = {
-    "nom" : "NON",
-    "prenom" : "test_prenom",
-    "codePermanent" : "BOUM15078700",
-    "sexe" : "2",
-    "dateNaissance" : "1987-07-15",
-    "inscriptions" : [
-        {
-            "sigle": "INF4375",
-            "group": "10",
-            "session" : "20142",
-            "noteFinale" : "95"
-        }
-    ]
+    "nom": "NON",
+    "prenom": "test_prenom",
+    "codePermanent": "BOUM15078700",
+    "sexe": "2",
+    "dateNaissance": "1987-07-15",
+    "inscriptions": [{
+        "sigle": "INF4375",
+        "group": "10",
+        "session": "20142",
+        "noteFinale": "95"
+    }]
 }
 
 var idGroupeToModif;
@@ -38,111 +34,115 @@ var sigleDuGroupes = 'OUI'; // ne sert uniquement aux test n<Est pas pour le tp
 
 async.series([
 
-    function insererunGroupe(callback) {
-        console.log("Insertion d'un groupe dans la base de données.");
+        function insererunGroupe(callback) {
+            console.log("Insertion d'un groupe dans la base de données.");
 
-        requestify.request('http://localhost:3000/groupes', {
-            method: 'POST',
-            body: unGroupe,
-            dataType: 'json'
+            requestify.request('http://localhost:3000/groupes', {
+                method: 'POST',
+                body: unGroupe,
+                dataType: 'json'
 
-        }).then(function(response) {
+            }).then(function (response) {
 
-            console.log("Réponse serveur - code : " + response.getCode());
-            console.log("Réponse serveur - body: " + response.body);
+                console.log("Réponse serveur - code : " + response.getCode());
+                console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'insererunGroupe');
-        });
+                callback(null, 'insererunGroupe');
+            });
 
-    },
+        },
 
-    function getGroupes(callback) {
+        function getGroupes(callback) {
 
-        console.log("Consultation du groupe dans la base de donnéés.");
+            console.log("Consultation du groupe dans la base de donnéés.");
 
-        requestify.get('http://localhost:3000/groupes/test/' + sigleDuGroupes).then(function(response) {
+            requestify.get('http://localhost:3000/groupes/test/' + sigleDuGroupes).then(function (response) {
 
-            console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
-            idGroupeToModif = response.getBody()[0]['_id'];
+                console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
+                idGroupeToModif = response.getBody()[0]['_id'];
 
-            callback(null, 'getGroupes');
-        });
-    },
+                callback(null, 'getGroupes');
+            }, function (err) {
+                console.log(err);
+            });
+        },
 
-    function modifierUnGroupe(callback) {
-        console.log("\n\nModification de l'groupe (1).");
-        console.log("cp de l'groupe à modifier: " + idGroupeToModif );
+        function modifierUnGroupe(callback) {
+            console.log("\n\nModification de l'groupe (1).");
+            console.log("cp de l'groupe à modifier: " + idGroupeToModif);
 
-        var modifGroupe1 = {
-            "nomCours": "OUI"
-        };
-        console.log("\nModifications à apporter: " + JSON.stringify(modifGroupe1, null, 4));
+            var modifGroupe1 = {
+                "nomCours": "OUI"
+            };
+            console.log("\nModifications à apporter: " + JSON.stringify(modifGroupe1, null, 4));
 
-        requestify.request('http://localhost:3000/groupes/' + idGroupeToModif,
-            {method: 'PUT',
-             body: modifGroupe1,
-             dataType: 'json'}
+            requestify.request('http://localhost:3000/groupes/' + idGroupeToModif, {
+                    method: 'PUT',
+                    body: modifGroupe1,
+                    dataType: 'json'
+                }
 
-        ).then(function(response) {
+            ).then(function (response) {
 
-            console.log("Réponse serveur - code : " + response.getCode());
-            console.log("Réponse serveur - body: " + response.body);
+                console.log("Réponse serveur - code : " + response.getCode());
+                console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierunGroupe');
-        }).fail(function(response) {
-            console.log("Réponse serveur - code : " + response.getCode());
-            console.log("Réponse serveur - body: " + response.body);
+                callback(null, 'modifierunGroupe');
+            }).fail(function (response) {
+                console.log("Réponse serveur - code : " + response.getCode());
+                console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierUnGroupe');
-        });
+                callback(null, 'modifierUnGroupe');
+            });
 
-    },
+        },
 
-    function modifierUnGroupe2(callback) {
-        console.log("\n\nModification du dossier (2).");
-        console.log("_id de l'groupe à modifier: " + idGroupeToModif);
+        function modifierUnGroupe2(callback) {
+            console.log("\n\nModification du dossier (2).");
+            console.log("_id de l'groupe à modifier: " + idGroupeToModif);
 
-        var modifDossiers2 = {
-            "GUI": "no",
-            "website": "www.vim.org"
-        };
+            var modifDossiers2 = {
+                "GUI": "no",
+                "website": "www.vim.org"
+            };
 
-        console.log("\nModifications à apporter: " + JSON.stringify(modifDossiers2, null, 4));
+            console.log("\nModifications à apporter: " + JSON.stringify(modifDossiers2, null, 4));
 
-        requestify.request('http://localhost:3000/groupes/' + idGroupeToModif,
-            {method: 'PUT',
-             body: modifDossiers2,
-             dataType: 'json'}
+            requestify.request('http://localhost:3000/groupes/' + idGroupeToModif, {
+                    method: 'PUT',
+                    body: modifDossiers2,
+                    dataType: 'json'
+                }
 
-        ).then(function(response) {
+            ).then(function (response) {
 
-            console.log("Réponse serveur - code : " + response.getCode());
-            console.log("Réponse serveur - body: " + response.body);
+                console.log("Réponse serveur - code : " + response.getCode());
+                console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierUnGroupe2');
+                callback(null, 'modifierUnGroupe2');
 
-        }).fail(function(response) {
-            console.log("Réponse serveur - code : " + response.getCode());
-            console.log("Réponse serveur - body: " + response.body);
+            }).fail(function (response) {
+                console.log("Réponse serveur - code : " + response.getCode());
+                console.log("Réponse serveur - body: " + response.body);
 
-            callback(null, 'modifierUnGroupe2');
-        });
+                callback(null, 'modifierUnGroupe2');
+            });
 
-    },
+        },
 
-    function getDossiersApresSupp(callback) {
+        function getDossiersApresSupp(callback) {
 
-        console.log("Consultation de tous les groupes dans la base de donnéés après modification.");
+            console.log("Consultation de tous les groupes dans la base de donnéés après modification.");
 
-        requestify.get('http://localhost:3000/dossiers/' + idGroupeToModif ).then(function(response) {
+            requestify.get('http://localhost:3000/dossiers/' + idGroupeToModif).then(function (response) {
 
-            console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
-            console.log('------------------------------------------------------------------------')
+                console.log("Résultat retourné:" + JSON.stringify(response.getBody(), null, 4));
+                console.log('------------------------------------------------------------------------')
 
-            callback(null, 'getDossiersApresSupp');
-        });
-    }
-],
-    function(err, results) {
+                callback(null, 'getDossiersApresSupp');
+            });
+        }
+    ],
+    function (err, results) {
         console.log("\nFonctions exécutées:\n" + results + "\n");
     });

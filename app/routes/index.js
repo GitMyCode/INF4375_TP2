@@ -11,7 +11,7 @@ var mongoDbConnection = require('./connection.js');
 
 var router = express.Router();
 var v = new Validator();
-var Schemas =  require('../support/schemas');
+var Schemas = require('../support/schemas');
 
 
 
@@ -166,38 +166,34 @@ router.delete('/dossiers/:cp', function (req, res) {
                 var collection = dbConnection.collection("dossiers");
                 collection.find({
                     'codePermanent': cpDossierToDelete
-                })
-                    .toArray(
-                        function (err, result) {
-                            if (err) {
-                                console.log(err);
-                            } else {
-
-                                //console.log(result[0].inscriptions[0]);
-                                console.log(checkSuccededCours(result[0]));
-                                if (!checkSuccededCours(result[0])) { // check
-                                    collection.remove({
-                                            'codePermanent': cpDossierToDelete
-                                        },
-                                        function (err, result) {
-                                            if (err) {
-                                                res.json(500, {
-                                                    error: err
-                                                });
-                                            } else {
-                                                res.json(200, {
-                                                    msg: "OK"
-                                                });
-                                            }
+                }).toArray(function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        //console.log(result[0].inscriptions[0]);
+                        console.log(checkSuccededCours(result[0]));
+                        if (!checkIfSuccededCours(result[0])) { // check
+                            collection.remove({
+                                    'codePermanent': cpDossierToDelete
+                                },
+                                function (err, result) {
+                                    if (err) {
+                                        res.json(500, {
+                                            error: err
                                         });
-                                } else {
-                                    res.json(500, {
-                                        error: "Le dossiers a des cours reussis"
-                                    });
-                                }
-                            }
+                                    } else {
+                                        res.json(200, {
+                                            msg: "OK"
+                                        });
+                                    }
+                                });
+                        } else {
+                            res.json(500, {
+                                error: "Le dossiers a des cours reussis"
+                            });
                         }
-                );
+                    }
+                });
 
 
             });
@@ -225,12 +221,16 @@ router.delete('/dossiers/:cp', function (req, res) {
 /*GET /groupes */
 router.get("/groupes/test/:sigle", function (req, res) {
     mongoDbConnection(function (dbConnection) {
-        dbConnection.collection('groupesCours').find({'sigle' : req.params.sigle}).toArray(
-            function( err, result ){
-                if(err){
-                    res.json(500, {error : err});
-                }else{
-                        res.json(result[result.length-1]);
+        dbConnection.collection('groupesCours').find({
+            'sigle': req.params.sigle
+        }).toArray(
+            function (err, result) {
+                if (err) {
+                    res.json(500, {
+                        error: err
+                    });
+                } else {
+                    res.json(result[result.length - 1]);
                 }
             }
         );
@@ -381,8 +381,44 @@ Méthode : DELETE
 URL : /groupes/:oid (où oid est l'ObjectId du groupe)
 */
 router.delete('/groupes/:oid', function (req, res) {
+    var idGroupe = req.params.oid;
+
 
     try {
+        mongoDbConnection(function (dbConnection) {
+            var collection = dbConnection.collection('groupesCours');
+            collection.find({
+                "_id": BSON.ObjectID.createFromHexString(idGroupe)
+            }).toArray(
+                function (err, result) {
+                    if (err) {
+                        res.json(500, {
+                            error: err
+                        });
+                    } else {
+                        if (!checkIfInscriptionCours(result[0])) {
+                            collection.remove({
+                                "_id": BSON.ObjectID.createFromHexString(idGroupe)
+                            }, function (err, result){
+                                if(err){
+                                    res.json(500,{
+                                        error: err
+                                    });
+                                }else{
+                                    res.json(200,{
+                                        msg: "groupe supprimé"
+                                    });
+                                }
+                            });
+                        } else {
+                            res.json(500, {
+                                error: "Le groupe a des étudiants inscrits"
+                            });
+                        }
+
+                    }
+                });
+        });
 
 
     } catch (error) {
@@ -399,18 +435,21 @@ module.exports = router;
 
 
 
-/* private methdoe */
-var checkSuccededCours = function (dossier) {
+/* private methode */
+var checkIfSuccededCours = function (dossier) {
 
     if (dossier.coursReussis.length > 0) {
         return true;
     } else {
         return false;
     }
-    for (var i = 0; i < dossier.inscriptions.length; i++) {
-        unCours = dossier.inscriptions[i];
+}
 
-        console.log(unCours);
+var checkIfInscriptionCours = function (groupe) {
+
+    if (groupe.ListeEtudiant.length > 0) {
+        return true;
+    } else {
+        return false;
     }
-
 }
