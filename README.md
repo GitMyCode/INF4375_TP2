@@ -19,7 +19,8 @@ body ->
 
 **Sortie**  
 Json object du dossier
-
+ succes -> :msg
+ error -> :error
 
 
 
@@ -89,7 +90,8 @@ type": "object",
 
 **Sortie**  
 success message
-
+succes -> :msg      
+ error -> :error        
 
 
 
@@ -138,7 +140,9 @@ body ->
 ```
 **Sortie**  
 success message
-
+succes -> :msg      
+ error -> :error    
+ 
 4 – Suppression d'un dossier d'étudiant
 ---
 Description : Supprime le dossier de l'étudiant. Il est impossible de supprimer un dossier si
@@ -152,7 +156,8 @@ params ->   :cp  (codePermanent)
 body ->     
 **Sortie**     
 success message
-
+succes -> :msg      
+ error -> :error        
 
 ---------------------------------------------------------------------------
 
@@ -170,7 +175,8 @@ params ->   :oid  (object id)
 body ->     
 **Sortie**     
 Json object du groupe
-
+succes -> :msg      
+ error -> :error        
 
 6 – Ajout d'un groupe-cours
 ---
@@ -244,7 +250,8 @@ body ->
 ```
 **Sortie**   
 Success message
-
+succes -> :msg      
+ error -> :error        
 
 
 7 – Modification d'un groupe-cours
@@ -318,7 +325,8 @@ body ->
 ```
 **Sortie**    
 Success message
-
+succes -> :msg      
+ error -> :error        
 
 
 8 – Suppression d'un groupe-cours
@@ -334,4 +342,5 @@ params ->   :oid  (object id)
 body ->     
 **Sortie**    
 Success message
-
+succes -> :msg      
+ error -> :error        
