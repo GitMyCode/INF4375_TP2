@@ -216,19 +216,19 @@ module.exports.schemaGroupesPUT = {
                 "properties": {
                     "codePermanent": {
                         "type": "string",
-                        "required": true
+                        "required": false
                     },
                     "nom": {
                         "type": "string",
-                        "required": true
+                        "required": false
                     },
                     "prenom": {
                         "type": "string",
-                        "required": true
+                        "required": false
                     },
                     "noteFinale": {
                         "type": "string",
-                        "required": true
+                        "required": false
                     }
                 }
             }
